@@ -1,0 +1,79 @@
+# NLP Task 11: Text Classification using Support Vector Machine
+
+# Step 1: Import required libraries
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report
+
+# Step 2: Sample text dataset
+texts = [
+    "I love this movie",
+    "This movie is amazing",
+    "The film was excellent",
+    "I really enjoyed the movie",
+    "What a fantastic film",
+    "This movie is wonderful",
+    "I hate this movie",
+    "This movie is terrible",
+    "The film was boring",
+    "I did not like the movie",
+    "This was a horrible film",
+    "The movie was disappointing"
+]
+
+# 1 = Positive, 0 = Negative
+labels = [
+    1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0
+]
+
+# Step 3: Convert text into numerical features using TF-IDF
+vectorizer = TfidfVectorizer()
+
+X = vectorizer.fit_transform(texts)
+y = labels
+
+# Step 4: Split dataset into training and testing data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.25,
+    random_state=42,
+    stratify=y
+)
+
+# Step 5: Create SVM model
+model = SVC(kernel='linear')
+
+# Step 6: Train the model
+model.fit(X_train, y_train)
+
+# Step 7: Make predictions
+y_pred = model.predict(X_test)
+
+# Step 8: Check accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("Accuracy:", accuracy)
+
+# Step 9: Classification report
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, zero_division=0))
+
+# Step 10: Test with new sentences
+new_text = [
+    "This movie is fantastic",
+    "The movie was horrible"
+]
+
+new_text_features = vectorizer.transform(new_text)
+
+predictions = model.predict(new_text_features)
+
+print("\nPredictions:")
+
+for text, prediction in zip(new_text, predictions):
+    if prediction == 1:
+        print(text, "-> Positive")
+    else:
+        print(text, "-> Negative")
